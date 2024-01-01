@@ -10,6 +10,10 @@ pub struct Condition {
 impl Condition {
     pub fn parse_condition(condition: String) -> Condition {
         let tokens: Vec<&str> = condition.split(" ").into_iter().filter(|&x| x != "").collect();
+        if (tokens.len() < 5) {
+            // TODO Weather only reported sometimes! This causes a bug
+            panic!("Weather is probably missing!: {}", condition);
+        }
         Condition {
             time: tokens[0].to_string(),
             wind: Wind::parse_wind(tokens[1]),
@@ -21,10 +25,10 @@ impl Condition {
 
     pub fn to_string(&self) -> String {
         let mut condition_str = format!("Time: {}", self.time);
-        condition_str = format!("{}\nWind: {}", condition_str, self.wind.to_string());
-        condition_str = format!("{}\nVisibility: {}", condition_str, self.visibility);
-        condition_str = format!("{}\nWeather: {}", condition_str, self.weather);
-        condition_str = format!("{}\nSky: {}", condition_str, self.sky);
+        condition_str = format!("{}\n\tWind: {}", condition_str, self.wind.to_string());
+        condition_str = format!("{}\n\tVisibility: {}", condition_str, self.visibility);
+        condition_str = format!("{}\n\tWeather: {}", condition_str, self.weather);
+        condition_str = format!("{}\n\tSky: {}", condition_str, self.sky);
         condition_str
     }
 }

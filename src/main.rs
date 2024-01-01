@@ -25,6 +25,7 @@ fn main() {
             continue;
         }
         if user_input.trim().len() == 3 {
+            // what about U14?
             user_input = format!("K{}", user_input);
         }
         println!("Getting Terminal Aerodrome Forecast: {}", user_input);

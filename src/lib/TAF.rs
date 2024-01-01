@@ -8,7 +8,6 @@ use reqwest;
  * This file contains the functions to fetch the TAF data from the NOAA website.
  *
 **/
-// this function takes a string and returns a string
 pub fn fetch_taf(airport_code: &str) -> String {
     let url = format!("{}{}&taf=true", TAF_URL, airport_code);
     println!("Fetching TAF from {}", url);
