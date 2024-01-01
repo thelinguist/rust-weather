@@ -1,5 +1,6 @@
-use reqwest;
 use crate::constants::TAF_URL;
+use crate::lib::Condition::Condition;
+use reqwest;
 
 /**
  * TAF.rs
@@ -31,13 +32,7 @@ pub fn parse_taf(taf: String) -> TAF {
     // first line of TAF
     let airport = taf_initial[0].to_string();
     let reporting_time = taf_initial[1].to_string();
-    let initial_condition = Condition {
-        time: taf_initial[2].to_string(),
-        wind: taf_initial[3].to_string(),
-        visibility: taf_initial[4].to_string(),
-        weather: taf_initial[5].to_string(),
-        sky: taf_initial[6].to_string(),
-    };
+    let initial_condition = Condition::parse_condition(taf_initial[2..].join(" ").to_string());
     conditions.push(initial_condition);
 
     // rest of TAF
@@ -45,25 +40,17 @@ pub fn parse_taf(taf: String) -> TAF {
         if line.len() == 0 {
             break;
         }
-        let tokens: Vec<&str> = line.split(" ").into_iter().filter(|&x| x != "").collect();
-        let condition = Condition {
-            time: tokens[0].to_string(),
-            wind: tokens[1].to_string(),
-            visibility: tokens[2].to_string(),
-            weather: tokens[3].to_string(),
-            sky: tokens[4].to_string(),
-        };
+        let condition = Condition::parse_condition(line.to_string());
         conditions.push(condition);
     }
 
     let taf_obj = TAF {
         airport,
-        reporting_time: reporting_time,
+        reporting_time,
         conditions,
     };
-    return taf_obj
+    return taf_obj;
 }
-
 
 pub struct TAF {
     pub airport: String,
@@ -81,25 +68,5 @@ impl TAF {
             taf_str = format!("{}\n{}", taf_str, condition.to_string());
         }
         taf_str
-    }
-
-}
-
-pub struct Condition {
-    pub time: String,
-    pub wind: String,
-    pub visibility: String,
-    pub weather: String,
-    pub sky: String,
-}
-
-impl Condition {
-    pub fn to_string(&self) -> String {
-        let mut condition_str = format!("Time: {}", self.time);
-        condition_str = format!("{}\nWind: {}", condition_str, self.wind);
-        condition_str = format!("{}\nVisibility: {}", condition_str, self.visibility);
-        condition_str = format!("{}\nWeather: {}", condition_str, self.weather);
-        condition_str = format!("{}\nSky: {}", condition_str, self.sky);
-        condition_str
     }
 }
