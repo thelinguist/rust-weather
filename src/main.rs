@@ -1,10 +1,8 @@
-
 mod constants;
 mod lib;
 
 use crate::constants::QUIT;
-use crate::lib::TAF;
-
+use crate::lib::taf;
 
 // don't be tempted to use tokio, we only need one request/thread, so it's blocking
 // https://tokio.rs/tokio/tutorial
@@ -30,8 +28,8 @@ fn main() {
         }
         println!("Getting Terminal Aerodrome Forecast: {}", user_input);
 
-        let taf_str: String = TAF::fetch_taf(user_input.trim());
-        let taf = TAF::parse_taf(taf_str);
+        let taf_str: String = taf::fetch_taf(user_input.trim());
+        let taf = taf::parse_taf(taf_str);
         println!("{}", taf.to_string());
         user_input = String::new();
     }
