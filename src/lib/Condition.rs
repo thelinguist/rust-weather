@@ -10,16 +10,18 @@ pub struct Condition {
 impl Condition {
     pub fn parse_condition(condition: String) -> Condition {
         let tokens: Vec<&str> = condition.split(" ").into_iter().filter(|&x| x != "").collect();
-        if (tokens.len() < 5) {
-            // TODO Weather only reported sometimes! This causes a bug
-            panic!("Weather is probably missing!: {}", condition);
+        let mut weather: String = String::new();
+        let mut sky_index: usize = 3;
+        if tokens.len() > 4 {
+            weather = tokens[3].to_string();
+            sky_index = 4;
         }
         Condition {
             time: tokens[0].to_string(),
             wind: Wind::parse_wind(tokens[1]),
             visibility: tokens[2].to_string(),
-            weather: tokens[3].to_string(),
-            sky: tokens[4].to_string(),
+            weather: weather,
+            sky: tokens[sky_index].to_string(),
         }
     }
 

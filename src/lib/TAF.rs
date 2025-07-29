@@ -31,8 +31,9 @@ pub fn parse_taf(taf: String) -> TAF {
     // first line of TAF
     let airport = taf_initial[0].to_string();
     let reporting_time = taf_initial[1].to_string();
-    let initial_condition = Condition::parse_condition(taf_initial[2..].join(" ").to_string());
-    conditions.push(initial_condition);
+    let temps_winds_vis = taf_initial[2..].join(" ").to_string();
+    // let initial_condition = Condition::parse_condition(temps_winds_vis);
+    // conditions.push(initial_condition);
 
     // rest of TAF
     for line in &lines[2..] {
