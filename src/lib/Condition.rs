@@ -1,4 +1,3 @@
-
 pub struct Condition {
     pub time: String,
     pub wind: Wind,
@@ -9,7 +8,11 @@ pub struct Condition {
 
 impl Condition {
     pub fn parse_condition(condition: String) -> Condition {
-        let tokens: Vec<&str> = condition.split(" ").into_iter().filter(|&x| x != "").collect();
+        let tokens: Vec<&str> = condition
+            .split(" ")
+            .into_iter()
+            .filter(|&x| x != "")
+            .collect();
         let mut weather: String = String::new();
         let mut sky_index: usize = 3;
         if tokens.len() > 4 {
@@ -20,7 +23,7 @@ impl Condition {
             time: tokens[0].to_string(),
             wind: Wind::parse_wind(tokens[1]),
             visibility: tokens[2].to_string(),
-            weather: weather,
+            weather,
             sky: tokens[sky_index].to_string(),
         }
     }
@@ -36,21 +39,49 @@ impl Condition {
 }
 
 pub struct Wind {
-    pub direction: u16,
-    pub speed: u16,
+    pub direction: i16,
+    pub speed: u8,
 }
 
 impl Wind {
     pub fn parse_wind(wind: &str) -> Wind {
-        let direction = wind[..3].parse::<u16>().unwrap();
-        let speed = wind[3..5].parse::<u16>().unwrap();
-        Wind {
-            direction,
-            speed,
+        let direction_str = wind[..3].to_string();
+        let mut direction: i16 = -1;
+        if direction_str != "VRB" {
+            direction = wind[..3].parse::<i16>().unwrap();
         }
+        let speed = wind[3..5].parse::<u8>().unwrap();
+        Wind { direction, speed }
     }
 
     pub fn to_string(&self) -> String {
-        format!("{} at {} KT", self.direction, self.speed)
+        let mut direction = self.direction.to_string();
+        if self.direction < 0 {
+            direction = "VRB".to_string();
+        }
+        format!("{} at {} KT", direction, self.speed)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_wind_with_vrb() {
+        let wind_str = "VRB99KT";
+        let result = Wind::parse_wind(wind_str);
+
+        assert_eq!(result.direction, -1);
+        assert_eq!(result.speed, 99);
+    }
+
+    #[test]
+    fn test_wind_with_nominal_numbers() {
+        let wind_str = "18006KT";
+        let result = Wind::parse_wind(wind_str);
+
+        assert_eq!(result.direction, 180);
+        assert_eq!(result.speed, 6);
     }
 }
